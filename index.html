@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang='vi'>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài tâp hóa học ABC</title>
+
+  <!-- Sử dụng Google Fonts cho giao diện hiện đại -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$']] },
+      chtml: { scale: 0.9 },
+      svg: { fontCache: 'global' }
+    };
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      var draggable = document.getElementById(data);
+      var dropZone = ev.target;
+      while (dropZone && !dropZone.classList.contains("dropzone") && dropZone.tagName !== "BODY") {
+        dropZone = dropZone.parentNode;
+      }
+      if (!dropZone) return;
+      var label = dropZone.querySelector(".drop-label");
+      if (label) {
+         if (label.nextSibling) {
+           dropZone.insertBefore(draggable, label.nextSibling);
+         } else {
+           dropZone.appendChild(draggable);
+         }
+      } else {
+         dropZone.appendChild(draggable);
+      }
+    }
+    function allowDrop(ev) { ev.preventDefault(); }
+    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .top-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+    .score-box {
+      background: #4CAF50;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 1.1em;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.8em;
+      color: #333;
+    }
+    .header h2 {
+      margin: 10px 0 0;
+      font-size: 1.2em;
+      color: #777;
+    }
+    .section {
+      margin-top: 30px;
+    }
+    .section h2 {
+      font-size: 1.4em;
+      margin-bottom: 20px;
+      color: #4285f4;
+    }
+    .question {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f2f2f2;
+    }
+    .question p {
+      margin: 0 0 10px 0;
+    }
+    .option {
+      margin: 5px 0;
+    }
+    .explanation {
+      margin-top: 10px;
+    }
+    button {
+      background: #4285f4;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover { background: #307cf1; }
+    /* Drag and drop */
+    .drag-drop-container {
+      display: flex;
+      gap: 10px;
+    }
+    .drag-column, .drop-column {
+      flex: 1;
+      background: #fff;
+      border: 1px dashed #ccc;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .draggable-item {
+      background: #e8f0fe;
+      border: 1px solid #c6dafc;
+      padding: 8px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      cursor: move;
+      text-align: center;
+    }
+    .dropzone {
+      min-height: 50px;
+      border: 1px dashed #aaa;
+      margin: 5px 0;
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+    }
+    .drop-label {
+      font-weight: bold;
+      color: #555;
+    }
+    /* Updated CSS for blanks in Part IV */
+    .blank-container {
+      display: inline;
+    }
+    .blank-container input.auto-expand, .blank-container span {
+      white-space: normal;
+      min-width: 60px;
+      height: 25px;
+      font-size: 18px;
+      vertical-align: baseline;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+    }
+    mjx-container[jax="CHTML"][display="true"] {
+      margin-top: 0 !important;
+      margin-bottom: -1.5em !important;
+    }
+    /* Media query cho smartphone */
+    @media only screen and (max-width: 600px) {
+      body { padding: 10px; font-size: 16px; }
+      .container { padding: 15px; }
+      .header h1 { font-size: 1.8em; }
+      .header h2 { font-size: 1.2em; }
+      .score-box { font-size: 1em; padding: 8px 12px; }
+    }
+  </style>
+
+</head>
+<body>
+  <div class='container'>
+    <div class='top-row'><div class='score-box' id='scoreDisplay'>Tổng số điểm:</div></div>
+    <div class='header'><h1>BÀI TẬP XEN PHỦ VÀ LAI HÓA OBITAL</h1><h2>(HÓA HỌC ABC)</h2></div>
+<div class='section' id='part1' data-parttype='1'>
+<h2>Phần 1: Trắc nghiệm nhiều lựa chọn (có một phương án đúng)</h2>
+<div class='question' id='part1_q1'>
+<p><strong>Câu 1:</strong><br><br>Thuyết lai hóa orbital (Orbital Hybridization) được đưa ra chủ yếu để giải quyết vấn đề gì mà thuyết liên kết cộng hóa trị (VB) thuần túy gặp khó khăn?</p>
+<div class='option'><label><input type='radio' name='part1_q1' value='A'> <strong>A.</strong>  Giải thích tính chất từ tính của chất.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='B'> <strong>B.</strong>  Giải thích hình học phân tử và góc liên kết thực tế.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='C'> <strong>C.</strong>  Giải thích năng lượng ion hóa của nguyên tử.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='D'> <strong>D.</strong>  Giải thích sự hình thành ion trong dung dịch.</label></div>
+<div class='explanation' id='part1_q1_result' data-answer='B' data-solution='%20%3Cbr%3EB%C3%A0i%20h%E1%BB%8Dc%20n%C3%AAu%20r%C3%B5%20thuy%E1%BA%BFt%20lai%20h%C3%B3a%20gi%C3%BAp%20gi%E1%BA%A3i%20th%C3%ADch%20%C4%91%C6%B0%E1%BB%A3c%20d%E1%BA%A1ng%20h%C3%ACnh%20h%E1%BB%8Dc%20v%C3%A0%20g%C3%B3c%20li%C3%AAn%20k%E1%BA%BFt%20c%E1%BB%A7a%20nhi%E1%BB%81u%20ph%C3%A2n%20t%E1%BB%AD%20%28v%C3%AD%20d%E1%BB%A5%20nh%C6%B0%20t%E1%BA%A1i%20sao%20CH%E2%82%84%20l%E1%BA%A1i%20c%C3%B3%20g%C3%B3c%20109%2C5%C2%B0%20v%C3%A0%204%20li%C3%AAn%20k%E1%BA%BFt%20gi%E1%BB%91ng%20nhau%29%20m%C3%A0%20s%E1%BB%B1%20xen%20ph%E1%BB%A7%20thu%E1%BA%A7n%20t%C3%BAy%20kh%C3%B4ng%20gi%E1%BA%A3i%20th%C3%ADch%20%C4%91%C6%B0%E1%BB%A3c.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q2'>
+<p><strong>Câu 2:</strong><br><br>Trong sự lai hóa sp³, một orbital s sẽ tổ hợp (trộn lẫn) với bao nhiêu orbital p?</p>
+<div class='option'><label><input type='radio' name='part1_q2' value='A'> <strong>A.</strong>  1 orbital p.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='B'> <strong>B.</strong>  2 orbital p.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='C'> <strong>C.</strong>  3 orbital p.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='D'> <strong>D.</strong>  4 orbital p.</label></div>
+<div class='explanation' id='part1_q2_result' data-answer='C' data-solution='%20%3Cbr%3ELai%20h%C3%B3a%20sp%C2%B3%20%C4%91%C6%B0%E1%BB%A3c%20h%C3%ACnh%20th%C3%A0nh%20khi%201%20orbital%20s%20t%E1%BB%95%20h%E1%BB%A3p%20v%E1%BB%9Bi%203%20orbital%20p%2C%20t%E1%BA%A1o%20th%C3%A0nh%204%20orbital%20lai%20h%C3%B3a%20sp%C2%B3.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q3'>
+<p><strong>Câu 3:</strong><br><br>Phân tử BeF₂ có cấu trúc thẳng, góc liên kết 180°. Nguyên tử trung tâm Berylium (Be) ở đây có kiểu lai hóa nào?</p>
+<div class='option'><label><input type='radio' name='part1_q3' value='A'> <strong>A.</strong>  sp.</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='B'> <strong>B.</strong>  sp².</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='C'> <strong>C.</strong>  sp³.</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='D'> <strong>D.</strong>  sp³d.</label></div>
+<div class='explanation' id='part1_q3_result' data-answer='A' data-solution='%20%3Cbr%3ED%E1%BB%B1a%20v%C3%A0o%20c%C3%B4ng%20th%E1%BB%A9c%20t%C3%ADnh%20ho%E1%BA%B7c%20th%E1%BB%B1c%20nghi%E1%BB%87m%20%28c%E1%BA%A5u%20tr%C3%BAc%20th%E1%BA%B3ng%29%2C%20Be%20li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%202%20nguy%C3%AAn%20t%E1%BB%AD%20F%20v%C3%A0%20kh%C3%B4ng%20c%C3%B2n%20c%E1%BA%B7p%20electron%20t%E1%BB%B1%20do%20%282%20%2B%200%20%3D%202%29%2C%20suy%20ra%20Be%20c%C3%B3%20lai%20h%C3%B3a%20sp.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q4'>
+<p><strong>Câu 4:</strong><br><br>Góc liên kết lý thuyết của kiểu lai hóa sp² là bao nhiêu?</p>
+<div class='option'><label><input type='radio' name='part1_q4' value='A'> <strong>A.</strong>  180°.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='B'> <strong>B.</strong>  120°.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='C'> <strong>C.</strong>  109,5°.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='D'> <strong>D.</strong>  90°.</label></div>
+<div class='explanation' id='part1_q4_result' data-answer='B' data-solution='%20%3Cbr%3EC%C3%A1c%20orbital%20lai%20h%C3%B3a%20sp%C2%B2%20h%C6%B0%E1%BB%9Bng%20v%E1%BB%81%203%20%C4%91%E1%BB%89nh%20c%E1%BB%A7a%20m%E1%BB%99t%20tam%20gi%C3%A1c%20%C4%91%E1%BB%81u%20%C4%91%E1%BB%83%20%C4%91%E1%BA%A1t%20%C4%91%E1%BB%91i%20x%E1%BB%A9ng%20cao%20nh%E1%BA%A5t%2C%20t%E1%BA%A1o%20ra%20g%C3%B3c%20li%C3%AAn%20k%E1%BA%BFt%20l%C3%A0%20120%C2%B0.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q5'>
+<p><strong>Câu 5:</strong><br><br>Liên kết pi (π) thường được hình thành do sự xen phủ nào?<br></p>
+<div class='option'><label><input type='radio' name='part1_q5' value='A'> <strong>A.</strong>  Xen phủ trục của orbital s và s.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='B'> <strong>B.</strong>  Xen phủ trục của orbital s và p.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='C'> <strong>C.</strong>  Xen phủ trục của hai orbital p.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='D'> <strong>D.</strong>  Xen phủ bên của hai orbital p.</label></div>
+<div class='explanation' id='part1_q5_result' data-answer='D' data-solution='%20%3Cbr%3EXen%20ph%E1%BB%A7%20tr%E1%BB%A5c%20t%E1%BA%A1o%20li%C3%AAn%20k%E1%BA%BFt%20sigma%20%28%CF%83%29%2C%20trong%20khi%20xen%20ph%E1%BB%A7%20b%C3%AAn%20%28hai%20orbital%20p%20n%E1%BA%B1m%20song%20song%29%20t%E1%BA%A1o%20ra%20li%C3%AAn%20k%E1%BA%BFt%20pi%20%28%CF%80%29.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q6'>
+<p><strong>Câu 6:</strong><br><br>Trong phân tử Methen (CH₄), góc liên kết HCH thực tế là bao nhiêu?</p>
+<div class='option'><label><input type='radio' name='part1_q6' value='A'> <strong>A.</strong>  90°.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='B'> <strong>B.</strong>  120°.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='C'> <strong>C.</strong>  104,5°.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='D'> <strong>D.</strong>  109,5°.</label></div>
+<div class='explanation' id='part1_q6_result' data-answer='D' data-solution='%20%3Cbr%3ECarbon%20trong%20CH%E2%82%84%20c%C3%B3%20lai%20h%C3%B3a%20sp%C2%B3%2C%20c%E1%BA%A5u%20tr%C3%BAc%20t%E1%BB%A9%20di%E1%BB%87n%20%C4%91%E1%BB%81u%2C%20n%C3%AAn%20c%C3%A1c%20g%C3%B3c%20li%C3%AAn%20k%E1%BA%BFt%20%C4%91%E1%BB%81u%20b%E1%BA%B1ng%20nhau%20v%C3%A0%20b%E1%BA%B1ng%20109%2C5%C2%B0.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q7'>
+<p><strong>Câu 7:</strong><br><br>Để dự đoán kiểu lai hóa, ta tính tổng X = (số nguyên tử liên kết với nguyên tử trung tâm) + (số cặp electron tự do). Nếu X = 3 thì nguyên tử trung tâm lai hóa kiểu gì?</p>
+<div class='option'><label><input type='radio' name='part1_q7' value='A'> <strong>A.</strong>  sp.</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='B'> <strong>B.</strong>  sp².</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='C'> <strong>C.</strong>  sp³.</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='D'> <strong>D.</strong>  Không lai hóa.</label></div>
+<div class='explanation' id='part1_q7_result' data-answer='B' data-solution='%20%3Cbr%3EX%20%3D%202%20l%C3%A0%20sp%2C%20X%20%3D%203%20l%C3%A0%20sp%C2%B2%2C%20X%20%3D%204%20l%C3%A0%20sp%C2%B3.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q8'>
+<p><strong>Câu 8:</strong><br><br>Trong phân tử nước (H₂O), nguyên tử Oxygen có kiểu lai hóa sp³ nhưng góc liên kết HOH thực tế chỉ còn khoảng 104,5°. Nguyên nhân chính là gì?</p>
+<div class='option'><label><input type='radio' name='part1_q8' value='A'> <strong>A.</strong>  Do độ âm điện của Hydro lớn.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='B'> <strong>B.</strong>  Do Oxygen không kích thích electron.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='C'> <strong>C.</strong>  Do cặp electron chưa liên kết chiếm không gian lớn ép góc liên kết lại.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='D'> <strong>D.</strong>  Do lai hóa chuyển từ sp³ sang sp².</label></div>
+<div class='explanation' id='part1_q8_result' data-answer='C' data-solution='%20%3Cbr%3EC%E1%BA%B7p%20electron%20kh%C3%B4ng%20li%C3%AAn%20k%E1%BA%BFt%20%28t%E1%BB%B1%20do%29%20chi%E1%BA%BFm%20kh%C3%B4ng%20gian%20r%E1%BB%99ng%20h%C6%A1n%20v%C3%B9ng%20xen%20ph%E1%BB%A7%20li%C3%AAn%20k%E1%BA%BFt%2C%20n%C3%AAn%20n%C3%B3%20%C4%91%E1%BA%A9y%20c%C3%A1c%20c%E1%BA%B7p%20electron%20li%C3%AAn%20k%E1%BA%BFt%20l%E1%BA%A1i%20g%E1%BA%A7n%20nhau%20h%C6%A1n%2C%20l%C3%A0m%20g%C3%B3c%20thu%20h%E1%BA%B9p%20t%E1%BB%AB%20109%2C5%C2%B0%20xu%E1%BB%91ng%20104%2C5%C2%B0.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q9'>
+<p><strong>Câu 9:</strong><br><br>Một liên kết đôi bao gồm những thành phần nào?</p>
+<div class='option'><label><input type='radio' name='part1_q9' value='A'> <strong>A.</strong>  Hai liên kết sigma (σ).</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='B'> <strong>B.</strong>  Hai liên kết pi (π).</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='C'> <strong>C.</strong>  Một liên kết sigma (σ) và một liên kết pi (π).</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='D'> <strong>D.</strong>  Một liên kết sigma (σ) và hai liên kết pi (π).</label></div>
+<div class='explanation' id='part1_q9_result' data-answer='C' data-solution='%20%3Cbr%3ELi%C3%AAn%20k%E1%BA%BFt%20%C4%91%C3%B4i%20g%E1%BB%93m%201%20li%C3%AAn%20k%E1%BA%BFt%20sigma%20h%C3%ACnh%20th%C3%A0nh%20do%20xen%20ph%E1%BB%A7%20tr%E1%BB%A5c%20v%C3%A0%201%20li%C3%AAn%20k%E1%BA%BFt%20pi%20h%C3%ACnh%20th%C3%A0nh%20do%20xen%20ph%E1%BB%A7%20b%C3%AAn.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q10'>
+<p><strong>Câu 10:</strong><br><br>Trong lai hóa orbital, các orbital tham gia tổ hợp phải thỏa mãn điều kiện gì?</p>
+<div class='option'><label><input type='radio' name='part1_q10' value='A'> <strong>A.</strong>  Phải nằm ở các lớp electron khác nhau.</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='B'> <strong>B.</strong>  Phải có mức năng lượng gần bằng nhau.</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='C'> <strong>C.</strong>  Phải có hình dạng giống hệt nhau.</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='D'> <strong>D.</strong>  Phải chứa đầy electron.</label></div>
+<div class='explanation' id='part1_q10_result' data-answer='B' data-solution='%20%3Cbr%3E%C4%90i%E1%BB%81u%20ki%E1%BB%87n%20quan%20tr%E1%BB%8Dng%20%C4%91%E1%BB%83%20lai%20h%C3%B3a%20x%E1%BA%A3y%20ra%20l%C3%A0%20c%C3%A1c%20orbital%20nguy%C3%AAn%20t%E1%BB%AD%20tham%20gia%20%28th%C6%B0%E1%BB%9Dng%20l%C3%A0%20s%20v%C3%A0%20p%20l%E1%BB%9Bp%20ngo%C3%A0i%20c%C3%B9ng%29%20ph%E1%BA%A3i%20c%C3%B3%20m%E1%BB%A9c%20n%C4%83ng%20l%C6%B0%E1%BB%A3ng%20g%E1%BA%A7n%20nhau.%3Cbr%3E'></div>
+</div>
+</div>
+<div class='section' id='part2' data-parttype='2'>
+<h2>Phần 2: Trắc nghiệm nhiều lựa chọn (có thể có nhiều đáp án đúng)</h2>
+<div class='question' id='part2_q1'>
+<p><strong>Câu 1:</strong><br><br>Những phát biểu nào sau đây là ĐÚNG về đặc điểm của các orbital lai hóa?</p>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='A'> <strong>A.</strong>  Có hình dạng và kích thước giống nhau (trong cùng một kiểu lai hóa).</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='B'> <strong>B.</strong>  Có mức năng lượng bằng nhau.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='C'> <strong>C.</strong>  Có định hướng không gian xác định.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='D'> <strong>D.</strong>  Luôn luôn có hình cầu giống orbital s.</label></div>
+<div class='explanation' id='part2_q1_result' data-answer='A,B,C' data-solution='%20%3Cbr%3EOrbital%20lai%20h%C3%B3a%20%C4%91%C6%B0%E1%BB%A3c%20t%E1%BA%A1o%20ra%20t%E1%BB%AB%20s%E1%BB%B1%20t%E1%BB%95%20h%E1%BB%A3p%20n%C3%AAn%20ch%C3%BAng%20%C4%91%E1%BB%93ng%20nh%E1%BA%A5t%20v%E1%BB%81%20n%C4%83ng%20l%C6%B0%E1%BB%A3ng%20v%C3%A0%20h%C3%ACnh%20d%E1%BA%A1ng%2C%20c%C3%B3%20h%C6%B0%E1%BB%9Bng%20x%C3%A1c%20%C4%91%E1%BB%8Bnh%20%28th%E1%BA%B3ng%2C%20tam%20gi%C3%A1c%2C%20t%E1%BB%A9%20di%E1%BB%87n%29.%20D%20sai%20v%C3%AC%20orbital%20lai%20h%C3%B3a%20th%C6%B0%E1%BB%9Dng%20c%C3%B3%202%20th%C3%B9y%20kh%C3%B4ng%20c%C3%A2n%20x%E1%BB%A9ng%2C%20kh%C3%B4ng%20ph%E1%BA%A3i%20h%C3%ACnh%20c%E1%BA%A7u.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q2'>
+<p><strong>Câu 2:</strong><br><br>Chọn các phân tử mà nguyên tử trung tâm có lai hóa sp²:</p>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='A'> <strong>A.</strong>  BF₃ (Boron trifluoride).</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='B'> <strong>B.</strong>  C₂H₄ (Ethylene - xét nguyên tử C).</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='C'> <strong>C.</strong>  BeF₂ (Berylium fluoride).</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='D'> <strong>D.</strong>  CH₄ (Methane).</label></div>
+<div class='explanation' id='part2_q2_result' data-answer='A,B' data-solution='%20%3Cbr%3EBF%E2%82%83%20c%C3%B3%20d%E1%BA%A1ng%20tam%20gi%C3%A1c%20ph%E1%BA%B3ng%20%28sp%C2%B2%29.%20Trong%20C%E2%82%82H%E2%82%84%2C%20m%E1%BB%97i%20nguy%C3%AAn%20t%E1%BB%AD%20Carbon%20li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%203%20nguy%C3%AAn%20t%E1%BB%AD%20kh%C3%A1c%20%281%20C%20v%C3%A0%202%20H%29%2C%20kh%C3%B4ng%20c%C3%B3%20c%E1%BA%B7p%20e%20t%E1%BB%B1%20do%20-%3E%20X%3D3%20-%3E%20sp%C2%B2.%20BeF%E2%82%82%20l%C3%A0%20sp%2C%20CH%E2%82%84%20l%C3%A0%20sp%C2%B3.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q3'>
+<p><strong>Câu 3:</strong><br><br>Trong phân tử CO₂ (O=C=O), những nhận định nào sau đây đúng?</p>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='A'> <strong>A.</strong>  Nguyên tử Carbon ở trạng thái lai hóa sp.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='B'> <strong>B.</strong>  Phân tử có cấu tạo thẳng, góc 180°.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='C'> <strong>C.</strong>  Trong phân tử có 2 liên kết sigma và 2 liên kết pi.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='D'> <strong>D.</strong>  Nguyên tử Carbon lai hóa sp³.</label></div>
+<div class='explanation' id='part2_q3_result' data-answer='A,B,C' data-solution='%20%3Cbr%3ECarbon%20li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%202%20Oxy%2C%20kh%C3%B4ng%20c%C3%B3%20c%E1%BA%B7p%20e%20t%E1%BB%B1%20do%20-%3E%20lai%20h%C3%B3a%20sp%20%28th%E1%BA%B3ng%2C%20180%C2%B0%29.%20M%E1%BB%97i%20li%C3%AAn%20k%E1%BA%BFt%20%C4%91%C3%B4i%20C%3DO%20g%E1%BB%93m%201%20sigma%20v%C3%A0%201%20pi%2C%20n%C3%AAn%20t%E1%BB%95ng%20l%C3%A0%202%20sigma%20v%C3%A0%202%20pi.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q4'>
+<p><strong>Câu 4:</strong><br><br>Khi xét phân tử Axetic acid (CH₃COOH), trạng thái lai hóa của các nguyên tử nào sau đây được xác định đúng?</p>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='A'> <strong>A.</strong>  Nguyên tử C trong nhóm CH₃ lai hóa sp³.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='B'> <strong>B.</strong>  Nguyên tử C trong nhóm COOH lai hóa sp².</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='C'> <strong>C.</strong>  Nguyên tử O trong nhóm OH lai hóa sp³.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='D'> <strong>D.</strong>  Nguyên tử O trong nhóm C=O lai hóa sp.</label></div>
+<div class='explanation' id='part2_q4_result' data-answer='A,B,C' data-solution='%20%3Cbr%3E%20C%20c%E1%BB%A7a%20CH%E2%82%83%20li%C3%AAn%20k%E1%BA%BFt%204%20nguy%C3%AAn%20t%E1%BB%AD%20-%3E%20sp%C2%B3.%3Cbr%3E%20C%20c%E1%BB%A7a%20COOH%20li%C3%AAn%20k%E1%BA%BFt%203%20nguy%C3%AAn%20t%E1%BB%AD%20%281C%2C%201O%20%C4%91%C3%B4i%2C%201O%20%C4%91%C6%A1n%29%20-%3E%20sp%C2%B2.%3Cbr%3E%20O%20c%E1%BB%A7a%20OH%20c%C3%B3%202%20li%C3%AAn%20k%E1%BA%BFt%20%C4%91%C6%A1n%20v%C3%A0%202%20c%E1%BA%B7p%20e%20t%E1%BB%B1%20do%20-%3E%20X%3D4%20-%3E%20sp%C2%B3.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q5'>
+<p><strong>Câu 5:</strong><br><br>Các loại xen phủ nào sau đây tạo thành liên kết sigma (σ)?</p>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='A'> <strong>A.</strong>  Xen phủ s - s.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='B'> <strong>B.</strong>  Xen phủ s - p (dọc trục).</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='C'> <strong>C.</strong>  Xen phủ p - p (dọc trục).</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='D'> <strong>D.</strong>  Xen phủ p - p (bên).</label></div>
+<div class='explanation' id='part2_q5_result' data-answer='A,B,C' data-solution='%20%3Cbr%3ELi%C3%AAn%20k%E1%BA%BFt%20sigma%20%C4%91%C6%B0%E1%BB%A3c%20h%C3%ACnh%20th%C3%A0nh%20do%20s%E1%BB%B1%20xen%20ph%E1%BB%A7%20tr%E1%BB%A5c.%20Xen%20ph%E1%BB%A7%20b%C3%AAn%20%28D%29%20t%E1%BA%A1o%20ra%20li%C3%AAn%20k%E1%BA%BFt%20pi.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q6'>
+<p><strong>Câu 6:</strong><br><br>Về mặt hình học, lai hóa sp³ liên quan đến những đặc điểm nào?</p>
+<div class='option'><label><input type='checkbox' name='part2_q6' value='A'> <strong>A.</strong>  Hình tứ diện đều.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q6' value='B'> <strong>B.</strong>  Góc liên kết lý thuyết 109,5°.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q6' value='C'> <strong>C.</strong>  4 orbital lai hóa hướng về 4 đỉnh của tứ diện.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q6' value='D'> <strong>D.</strong>  3 orbital lai hóa nằm trong một mặt phẳng.</label></div>
+<div class='explanation' id='part2_q6_result' data-answer='A,B,C' data-solution='%20%3Cbr%3ED%20l%C3%A0%20%C4%91%E1%BA%B7c%20%C4%91i%E1%BB%83m%20c%E1%BB%A7a%20lai%20h%C3%B3a%20sp%C2%B2.%20Lai%20h%C3%B3a%20sp%C2%B3%20t%E1%BA%A1o%20ra%204%20orbital%20h%C6%B0%E1%BB%9Bng%20v%E1%BB%81%204%20%C4%91%E1%BB%89nh%20t%E1%BB%A9%20di%E1%BB%87n.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q7'>
+<p><strong>Câu 7:</strong><br><br>Tại sao thực tế orbital không thực sự "trộn lẫn" vật lý như thuyết mô tả, nhưng thuyết lai hóa vẫn được sử dụng rộng rãi?</p>
+<div class='option'><label><input type='checkbox' name='part2_q7' value='A'> <strong>A.</strong>  Vì nó giải thích tốt cấu trúc hình học phân tử thực nghiệm.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q7' value='B'> <strong>B.</strong>  Vì nó là một công cụ toán học (mô hình giả thuyết) hữu ích.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q7' value='C'> <strong>C.</strong>  Vì nó giúp giải thích độ bền liên kết và tính chất hóa học.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q7' value='D'> <strong>D.</strong>  Vì nó là chân lý tuyệt đối không thể thay thế.</label></div>
+<div class='explanation' id='part2_q7_result' data-answer='A,B,C' data-solution='%20%3Cbr%3EB%C3%A0i%20h%E1%BB%8Dc%20nh%E1%BA%A5n%20m%E1%BA%A1nh%20lai%20h%C3%B3a%20l%C3%A0%20m%C3%B4%20h%C3%ACnh%20gi%E1%BA%A3%20thuy%E1%BA%BFt%20to%C3%A1n%20h%E1%BB%8Dc%20%C4%91%E1%BB%83%20h%E1%BB%A3p%20th%E1%BB%A9c%20h%C3%B3a%20k%E1%BA%BFt%20qu%E1%BA%A3%20th%E1%BB%B1c%20nghi%E1%BB%87m%2C%20kh%C3%B4ng%20ph%E1%BA%A3i%20hi%E1%BB%87n%20t%C6%B0%E1%BB%A3ng%20v%E1%BA%ADt%20l%C3%BD%20quan%20s%C3%A1t%20tr%E1%BB%B1c%20ti%E1%BA%BFp%2C%20nh%C6%B0ng%20r%E1%BA%A5t%20h%E1%BB%AFu%20%C3%ADch%20trong%20gi%E1%BA%A3ng%20d%E1%BA%A1y%20v%C3%A0%20nghi%C3%AAn%20c%E1%BB%A9u.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q8'>
+<p><strong>Câu 8:</strong><br><br>Xét phân tử Nitrogen (N₂), cấu tạo gồm liên kết ba N≡N. Điều này có nghĩa là:</p>
+<div class='option'><label><input type='checkbox' name='part2_q8' value='A'> <strong>A.</strong>  Có 1 liên kết sigma.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q8' value='B'> <strong>B.</strong>  Có 2 liên kết pi.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q8' value='C'> <strong>C.</strong>  Có 3 liên kết sigma.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q8' value='D'> <strong>D.</strong>  Sự xen phủ gồm 1 cặp p-p dọc trục và 2 cặp p-p xen phủ bên.</label></div>
+<div class='explanation' id='part2_q8_result' data-answer='A,B,D' data-solution='%20%3Cbr%3ELi%C3%AAn%20k%E1%BA%BFt%20ba%20bao%20g%E1%BB%93m%201%20sigma%20%28do%20xen%20ph%E1%BB%A7%20tr%E1%BB%A5c%29%20v%C3%A0%202%20pi%20%28do%20xen%20ph%E1%BB%A7%20b%C3%AAn%20c%E1%BB%A7a%202%20c%E1%BA%B7p%20orbital%20p%20vu%C3%B4ng%20g%C3%B3c%20nhau%29.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q9'>
+<p><strong>Câu 9:</strong><br><br>Nguyên tử trung tâm thường là nguyên tử có đặc điểm gì?</p>
+<div class='option'><label><input type='checkbox' name='part2_q9' value='A'> <strong>A.</strong>  Có ít nhất 2 nguyên tử khác liên kết với nó.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q9' value='B'> <strong>B.</strong>  Luôn luôn là nguyên tử Carbon.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q9' value='C'> <strong>C.</strong>  Có độ âm điện lớn nhất.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q9' value='D'> <strong>D.</strong>  Thường được xét lai hóa để giải thích góc liên kết.</label></div>
+<div class='explanation' id='part2_q9_result' data-answer='A,D' data-solution='%20%3Cbr%3ETheo%20b%C3%A0i%20h%E1%BB%8Dc%2C%20nguy%C3%AAn%20t%E1%BB%AD%20trung%20t%C3%A2m%20l%C3%A0%20nguy%C3%AAn%20t%E1%BB%AD%20li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%20%C3%ADt%20nh%E1%BA%A5t%202%20nguy%C3%AAn%20t%E1%BB%AD%20kh%C3%A1c%20%28v%C3%AD%20d%E1%BB%A5%20O%20trong%20H%E2%82%82O%2C%20C%20trong%20CH%E2%82%84%29%20v%C3%A0%20l%C3%A0%20%C4%91%E1%BB%91i%20t%C6%B0%E1%BB%A3ng%20%C4%91%E1%BB%83%20x%C3%A9t%20lai%20h%C3%B3a.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q10'>
+<p><strong>Câu 10:</strong><br><br>Phân tử C₂H₄ (Ethylene) có đặc điểm liên kết nào?</p>
+<div class='option'><label><input type='checkbox' name='part2_q10' value='A'> <strong>A.</strong>  Tất cả các góc H-C-H và H-C-C đều xấp xỉ 120°.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q10' value='B'> <strong>B.</strong>  Có tổng cộng 5 liên kết sigma.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q10' value='C'> <strong>C.</strong>  Có 1 liên kết pi.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q10' value='D'> <strong>D.</strong>  Nguyên tử Carbon có lai hóa sp³.</label></div>
+<div class='explanation' id='part2_q10_result' data-answer='A,B,C' data-solution='%20%3Cbr%3EC%20lai%20h%C3%B3a%20sp%C2%B2%20n%C3%AAn%20g%C3%B3c%20kho%E1%BA%A3ng%20120%C2%B0.%20Ph%C3%A2n%20t%E1%BB%AD%20c%C3%B3%204%20li%C3%AAn%20k%E1%BA%BFt%20C-H%20v%C3%A0%201%20li%C3%AAn%20k%E1%BA%BFt%20C-C%20%28trong%20n%E1%BB%91i%20%C4%91%C3%B4i%29%20%3D%3E%205%20sigma.%20C%C3%B3%201%20li%C3%AAn%20k%E1%BA%BFt%20pi%20trong%20n%E1%BB%91i%20%C4%91%C3%B4i.%20D%20sai%20v%C3%AC%20C%20l%C3%A0%20sp%C2%B2.%3Cbr%3E'></div>
+</div>
+</div>
+<div class='section' id='part3' data-parttype='3'>
+<h2>Phần 3: Trắc nghiệm trả lời ngắn</h2>
+<div class='question' id='part3_q1'>
+<p><strong>Câu 1:</strong><br><br>Trong phân tử NH₃ (tương tự ví dụ NF₃ trong bài), tổng số nguyên tử liên kết và cặp electron tự do xung quanh Nitrogen là bao nhiêu?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q1_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q1_result' data-answer=' 4|| Bốn|| bốn' data-solution='%3Cbr%3ENitrogen%20li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%203%20nguy%C3%AAn%20t%E1%BB%AD%20H%20%28ho%E1%BA%B7c%20F%29%20v%C3%A0%20c%C3%B2n%201%20c%E1%BA%B7p%20electron%20t%E1%BB%B1%20do.%20T%E1%BB%95ng%20X%20%3D%203%20%2B%201%20%3D%204.'></div>
+</div>
+<div class='question' id='part3_q2'>
+<p><strong>Câu 2:</strong><br><br>Một nguyên tử có kiểu lai hóa sp³ thì cấu trúc hình học không gian của các orbital lai hóa là hình gì?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q2_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q2_result' data-answer=' Tứ diện|| tứ diện' data-solution='%3Cbr%3E4%20orbital%20lai%20h%C3%B3a%20sp%C2%B3%20h%C6%B0%E1%BB%9Bng%20v%E1%BB%81%204%20%C4%91%E1%BB%89nh%20c%E1%BB%A7a%20h%C3%ACnh%20t%E1%BB%A9%20di%E1%BB%87n%20%C4%91%E1%BB%81u.'></div>
+</div>
+<div class='question' id='part3_q3'>
+<p><strong>Câu 3:</strong><br><br>Trong phân tử C₂H₂, mỗi nguyên tử Carbon liên kết với 1 Hydro và 1 Carbon khác (liên kết ba). Kiểu lai hóa của Carbon là gì?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q3_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q3_result' data-answer=' sp' data-solution='%3Cbr%3ECarbon%20li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%202%20nguy%C3%AAn%20t%E1%BB%AD%20%281H%2C%201C%29%20v%C3%A0%20kh%C3%B4ng%20c%C3%B3%20c%E1%BA%B7p%20e%20t%E1%BB%B1%20do%20-%3E%20X%3D2%20-%3E%20lai%20h%C3%B3a%20sp.'></div>
+</div>
+<div class='question' id='part3_q4'>
+<p><strong>Câu 4:</strong><br><br>Góc liên kết F-N-F trong phân tử NF₃ thực tế là khoảng bao nhiêu độ (viết số)?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q4_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q4_result' data-answer=' 102,5|| 102.5' data-solution='%3Cbr%3ETheo%20b%C3%A0i%20gi%E1%BA%A3ng%2C%20do%20%E1%BA%A3nh%20h%C6%B0%E1%BB%9Fng%20c%E1%BB%A7a%20c%E1%BA%B7p%20electron%20t%E1%BB%B1%20do%20v%C3%A0%20%C4%91%E1%BB%99%20%C3%A2m%20%C4%91i%E1%BB%87n%20c%E1%BB%A7a%20Flo%2C%20g%C3%B3c%20b%E1%BB%8B%20%C3%A9p%20xu%E1%BB%91ng%20c%C3%B2n%20kho%E1%BA%A3ng%20102%2C5%20%C4%91%E1%BB%99.'></div>
+</div>
+<div class='question' id='part3_q5'>
+<p><strong>Câu 5:</strong><br><br>Orbital s có dạng hình gì trong không gian?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q5_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q5_result' data-answer=' Hình cầu|| hình cầu|| cầu|| Cầu' data-solution='%3Cbr%3EOrbital%20s%20lu%C3%B4n%20c%C3%B3%20d%E1%BA%A1ng%20h%C3%ACnh%20c%E1%BA%A7u%20%C4%91%E1%BB%91i%20x%E1%BB%A9ng%20quanh%20h%E1%BA%A1t%20nh%C3%A2n.%3Cbr%3E'></div>
+</div>
+</div>
+<div class='section' id='part4' data-parttype='4'>
+<h2>Phần 4: Trắc nghiệm điền khuyết</h2>
+<div class='question' id='part4_q1'>
+<p><strong>Câu 1:</strong><br><br>Lai hóa sp được gọi là lai hóa đường thẳng, góc liên kết tạo bởi hai orbital lai hóa là <span class='blank-container'><input type='text' id='part4_q1_blank1' data-answer=' 180 độ|| 180|| 180^0|| 180^o' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span>.</p>
+<div class='explanation' id='part4_q1_result' data-solution='Lai%20h%C3%B3a%20sp%20t%E1%BA%A1o%20ra%20c%E1%BA%A5u%20tr%C3%BAc%20th%E1%BA%B3ng%20h%C3%A0ng%2C%20g%C3%B3c%20180%C2%B0.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part4_q2'>
+<p><strong>Câu 2:</strong><br><br>Trong lai hóa, số lượng orbital lai hóa thu được luôn <span class='blank-container'><input type='text' id='part4_q2_blank1' data-answer=' bằng' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> tổng số orbital nguyên tử tham gia tổ hợp.</p>
+<div class='explanation' id='part4_q2_result' data-solution='%C4%90%E1%BB%8Bnh%20lu%E1%BA%ADt%20b%E1%BA%A3o%20to%C3%A0n%20s%E1%BB%91%20l%C6%B0%E1%BB%A3ng%20orbital%3A%201s%20%2B%201p%20-%3E%202sp%3B%201s%20%2B%203p%20-%3E%204sp%C2%B3.'></div>
+</div>
+<div class='question' id='part4_q3'>
+<p><strong>Câu 3:</strong><br><br>Liên kết pi (π) kém bền hơn liên kết sigma (σ) do vùng xen phủ nằm ở hai bên sườn, mức độ xen phủ <span class='blank-container'><input type='text' id='part4_q3_blank1' data-answer=' kém' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> hơn.</p>
+<div class='explanation' id='part4_q3_result' data-solution='Xen%20ph%E1%BB%A7%20b%C3%AAn%20%28pi%29%20c%C3%B3%20di%E1%BB%87n%20t%C3%ADch%20ti%E1%BA%BFp%20x%C3%BAc%20k%C3%A9m%20h%C6%A1n%20xen%20ph%E1%BB%A7%20tr%E1%BB%A5c%20%28sigma%29%20n%C3%AAn%20li%C3%AAn%20k%E1%BA%BFt%20y%E1%BA%BFu%20h%C6%A1n.'></div>
+</div>
+<div class='question' id='part4_q4'>
+<p><strong>Câu 4:</strong><br><br>Lai hóa sp² còn được gọi là lai hóa <span class='blank-container'><input type='text' id='part4_q4_blank1' data-answer=' tam giác' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span>.</p>
+<div class='explanation' id='part4_q4_result' data-solution='Do%203%20orbital%20h%C6%B0%E1%BB%9Bng%20v%E1%BB%81%203%20%C4%91%E1%BB%89nh%20tam%20gi%C3%A1c%20%C4%91%E1%BB%81u%20%28Trigonal%20planar%29.'></div>
+</div>
+<div class='question' id='part4_q5'>
+<p><strong>Câu 5:</strong><br><br>Để tạo liên kết trong phân tử CH₄, một electron từ phân lớp 2s của Carbon được <span class='blank-container'><input type='text' id='part4_q5_blank1' data-answer=' kích thích' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> lên phân lớp 2p để tạo ra 4 electron độc thân.</p>
+<div class='explanation' id='part4_q5_result' data-solution='Qu%C3%A1%20tr%C3%ACnh%20chuy%E1%BB%83n%20electron%20t%E1%BB%AB%20s%20l%C3%AAn%20p%20%C4%91%E1%BB%83%20t%C4%83ng%20s%E1%BB%91%20electron%20%C4%91%E1%BB%99c%20th%C3%A2n%20g%E1%BB%8Di%20l%C3%A0%20k%C3%ADch%20th%C3%ADch%20electron.%3Cbr%3E'></div>
+</div>
+</div>
+<div class='section' id='part5' data-parttype='5'>
+<h2>Phần 5: Trắc nghiệm kéo - thả</h2>
+<div class='question' id='part5_q1'>
+<p class='question-content'><strong>Câu 1:</strong><br><br>Ghép số lượng orbital nguyên tử tham gia tổ hợp (Cột I) với tên kiểu lai hóa thu được (Cột II).</p>
+<div class='drag-drop-container'>
+<div class='drag-column'>
+<div class='draggable-item' data-label='2' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_0'>1 orbital s + 2 orbital p</div>
+<div class='draggable-item' data-label='4' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_1'>1 orbital s + 1 orbital d</div>
+<div class='draggable-item' data-label='1' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_2'>1 orbital s + 1 orbital p</div>
+<div class='draggable-item' data-label='3' draggable='true' ondragstart='drag(event)' id='part5_q1_drag_3'>1 orbital s + 3 orbital p</div>
+</div>
+<div class='drop-column'>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='A' id='part5_q1_drop_0' data-expected='3' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Lai hóa sp³</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='B' id='part5_q1_drop_1' data-expected='2' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Lai hóa sp²</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='C' id='part5_q1_drop_2' data-expected='1' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Lai hóa sp</div>
+</div>
+</div>
+</div>
+</div>
+<div class='explanation' id='part5_q1_result' data-answer-pairs='1 orbital s + 1 orbital p -- Lai hóa sp || 1 orbital s + 2 orbital p -- Lai hóa sp² || 1 orbital s + 3 orbital p -- Lai hóa sp³' data-solution='Lai%20h%C3%B3a%20sp%20l%C3%A0%20s%E1%BB%B1%20t%E1%BB%95%20h%E1%BB%A3p%20c%E1%BB%A7a%201%20orbital%20s%20v%C3%A0%201%20orbital%20p.%3Cbr%3E%20Lai%20h%C3%B3a%20sp%C2%B2%20l%C3%A0%20s%E1%BB%B1%20t%E1%BB%95%20h%E1%BB%A3p%20c%E1%BB%A7a%201%20orbital%20s%20v%C3%A0%202%20orbital%20p.%3Cbr%3E%20Lai%20h%C3%B3a%20sp%C2%B3%20l%C3%A0%20s%E1%BB%B1%20t%E1%BB%95%20h%E1%BB%A3p%20c%E1%BB%A7a%201%20orbital%20s%20v%C3%A0%203%20orbital%20p.%3Cbr%3E%20Ph%C6%B0%C6%A1ng%20%C3%A1n%20%221%20orbital%20s%20%2B%201%20orbital%20d%22%20kh%C3%B4ng%20t%E1%BA%A1o%20th%C3%A0nh%20c%C3%A1c%20ki%E1%BB%83u%20lai%20h%C3%B3a%20c%C6%A1%20b%E1%BA%A3n%20sp%2C%20sp%C2%B2%2C%20sp%C2%B3%20%C4%91%C6%B0%E1%BB%A3c%20x%C3%A9t%20trong%20b%C3%A0i.'></div>
+</div>
+<div class='question' id='part5_q2'>
+<p class='question-content'><strong>Câu 2:</strong><br><br>Ghép các phân tử (Cột I) với hình học phân tử tương ứng do lai hóa tạo thành (Cột II).</p>
+<div class='drag-drop-container'>
+<div class='drag-column'>
+<div class='draggable-item' data-label='1' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_0'>BeF₂</div>
+<div class='draggable-item' data-label='3' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_1'>CH₄</div>
+<div class='draggable-item' data-label='4' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_2'>C₂H₂</div>
+<div class='draggable-item' data-label='2' draggable='true' ondragstart='drag(event)' id='part5_q2_drag_3'>BF₃</div>
+</div>
+<div class='drop-column'>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='A' id='part5_q2_drop_0' data-expected='3' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Tứ diện đều</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='B' id='part5_q2_drop_1' data-expected='2' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Tam giác đều (phẳng)</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='C' id='part5_q2_drop_2' data-expected='1' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Đường thẳng</div>
+</div>
+</div>
+</div>
+</div>
+<div class='explanation' id='part5_q2_result' data-answer-pairs='BeF₂ -- Đường thẳng || BF₃ -- Tam giác đều (phẳng) || CH₄ -- Tứ diện đều' data-solution='BeF%E2%82%82%3A%20Nguy%C3%AAn%20t%E1%BB%AD%20trung%20t%C3%A2m%20lai%20h%C3%B3a%20sp%2C%20g%C3%B3c%20180%C2%B0%2C%20d%E1%BA%A1ng%20%C4%91%C6%B0%E1%BB%9Dng%20th%E1%BA%B3ng.%3Cbr%3EBF%E2%82%83%3A%20Nguy%C3%AAn%20t%E1%BB%AD%20trung%20t%C3%A2m%20lai%20h%C3%B3a%20sp%C2%B2%2C%20g%C3%B3c%20120%C2%B0%2C%20d%E1%BA%A1ng%20tam%20gi%C3%A1c%20%C4%91%E1%BB%81u.%3Cbr%3ECH%E2%82%84%3A%20Nguy%C3%AAn%20t%E1%BB%AD%20trung%20t%C3%A2m%20lai%20h%C3%B3a%20sp%C2%B3%2C%20g%C3%B3c%20109%2C5%C2%B0%2C%20d%E1%BA%A1ng%20t%E1%BB%A9%20di%E1%BB%87n%20%C4%91%E1%BB%81u.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part5_q3'>
+<p class='question-content'><strong>Câu 3:</strong><br><br>Ghép loại xen phủ orbital (Cột I) với loại liên kết được hình thành (Cột II).</p>
+<div class='drag-drop-container'>
+<div class='drag-column'>
+<div class='draggable-item' data-label='1' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_0'>Xen phủ dọc theo trục orbital (trục nối hạt nhân)</div>
+<div class='draggable-item' data-label='4' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_1'>Xen phủ của một orbital s và một orbital p dọc trục</div>
+<div class='draggable-item' data-label='3' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_2'>Xen phủ của hai orbital s</div>
+<div class='draggable-item' data-label='2' draggable='true' ondragstart='drag(event)' id='part5_q3_drag_3'>Xen phủ bên (bên sườn các orbital p song song)</div>
+</div>
+<div class='drop-column'>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='A' id='part5_q3_drop_0' data-expected='2' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Liên kết Pi (π)</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='B' id='part5_q3_drop_1' data-expected='1, 3, 4' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Liên kết Sigma (σ)</div>
+</div>
+</div>
+</div>
+</div>
+<div class='explanation' id='part5_q3_result' data-answer-pairs='Xen phủ dọc theo trục orbital (trục nối hạt nhân) -- Liên kết Sigma (σ) || Xen phủ bên (bên sườn các orbital p song song) -- Liên kết Pi (π) || Xen phủ của hai orbital s -- Liên kết Sigma (σ) || Xen phủ của một orbital s và một orbital p dọc trục -- Liên kết Sigma (σ)' data-solution='M%E1%BB%8Di%20s%E1%BB%B1%20xen%20ph%E1%BB%A7%20tr%E1%BB%A5c%20%28d%E1%BB%8Dc%20tr%E1%BB%A5c%20n%E1%BB%91i%20t%C3%A2m%29%2C%20bao%20g%E1%BB%93m%20s-s%2C%20s-p%2C%20p-p%20d%E1%BB%8Dc%20tr%E1%BB%A5c%2C%20%C4%91%E1%BB%81u%20t%E1%BA%A1o%20th%C3%A0nh%20li%C3%AAn%20k%E1%BA%BFt%20Sigma%20%28%CF%83%29.%3Cbr%3E%20S%E1%BB%B1%20xen%20ph%E1%BB%A7%20b%C3%AAn%20%28th%C6%B0%E1%BB%9Dng%20g%E1%BA%B7p%20%E1%BB%9F%20c%C3%A1c%20orbital%20p%29%20t%E1%BA%A1o%20th%C3%A0nh%20li%C3%AAn%20k%E1%BA%BFt%20Pi%20%28%CF%80%29.'></div>
+</div>
+<div class='question' id='part5_q4'>
+<p class='question-content'><strong>Câu 4:</strong><br><br>Ghép tổng số nguyên tử và cặp electron tự do (X) xung quanh nguyên tử trung tâm (Cột I) với kiểu lai hóa dự đoán (Cột II).</p>
+<div class='drag-drop-container'>
+<div class='drag-column'>
+<div class='draggable-item' data-label='2' draggable='true' ondragstart='drag(event)' id='part5_q4_drag_0'>X = 3 (Ví dụ: BF₃, C₂H₄)</div>
+<div class='draggable-item' data-label='4' draggable='true' ondragstart='drag(event)' id='part5_q4_drag_1'>X = 5 (Ví dụ: PCl₅)</div>
+<div class='draggable-item' data-label='3' draggable='true' ondragstart='drag(event)' id='part5_q4_drag_2'>X = 4 (Ví dụ: CH₄, H₂O, NH₃)</div>
+<div class='draggable-item' data-label='1' draggable='true' ondragstart='drag(event)' id='part5_q4_drag_3'>X = 2 (Ví dụ: CO₂, BeF₂)</div>
+</div>
+<div class='drop-column'>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='A' id='part5_q4_drop_0' data-expected='3' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Lai hóa sp³</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='B' id='part5_q4_drop_1' data-expected='2' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Lai hóa sp²</div>
+</div>
+</div>
+<div class='dropzone-wrapper'>
+<div class='dropzone' data-label='C' id='part5_q4_drop_2' data-expected='1' ondragover='allowDrop(event)' ondrop='drop(event)'>
+<div class='drop-label'>Lai hóa sp</div>
+</div>
+</div>
+</div>
+</div>
+<div class='explanation' id='part5_q4_result' data-answer-pairs='X = 2 (Ví dụ: CO₂, BeF₂) -- Lai hóa sp || X = 3 (Ví dụ: BF₃, C₂H₄) -- Lai hóa sp² || X = 4 (Ví dụ: CH₄, H₂O, NH₃) -- Lai hóa sp³' data-solution='Quy%20t%E1%BA%AFc%20d%E1%BB%B1%20%C4%91o%C3%A1n%20ki%E1%BB%83u%20lai%20h%C3%B3a%20d%E1%BB%B1a%20tr%C3%AAn%20t%E1%BB%95ng%20s%E1%BB%91%20nguy%C3%AAn%20t%E1%BB%AD%20li%C3%AAn%20k%E1%BA%BFt%20%2B%20c%E1%BA%B7p%20electron%20t%E1%BB%B1%20do%3A%3Cbr%3E%20N%E1%BA%BFu%20X%20%3D%202%20-%3E%20Lai%20h%C3%B3a%20sp.%3Cbr%3E%20N%E1%BA%BFu%20X%20%3D%203%20-%3E%20Lai%20h%C3%B3a%20sp%C2%B2.%3Cbr%3E%20N%E1%BA%BFu%20X%20%3D%204%20-%3E%20Lai%20h%C3%B3a%20sp%C2%B3.%3Cbr%3EGh%C3%A9p%20c%C3%A1c%20nguy%C3%AAn%20t%E1%BB%AD%20trong%20ph%C3%A2n%20t%E1%BB%AD%20Acetic%20acid%20%28CH%E2%82%83COOH%29%20%28C%E1%BB%99t%20I%29%20v%E1%BB%9Bi%20tr%E1%BA%A1ng%20th%C3%A1i%20lai%20h%C3%B3a%20c%E1%BB%A7a%20ch%C3%BAng%20%28C%E1%BB%99t%20II%29.%3Cbr%3EC%E1%BB%99t%20I%3A%3Cbr%3E1.%20Nguy%C3%AAn%20t%E1%BB%AD%20Carbon%20trong%20nh%C3%B3m%20CH%E2%82%83%3Cbr%3E2.%20Nguy%C3%AAn%20t%E1%BB%AD%20Carbon%20trong%20nh%C3%B3m%20COOH%3Cbr%3E3.%20Nguy%C3%AAn%20t%E1%BB%AD%20Oxygen%20trong%20nh%C3%B3m%20OH%20%28li%C3%AAn%20k%E1%BA%BFt%20%C4%91%C6%A1n%29%3Cbr%3E4.%20Nguy%C3%AAn%20t%E1%BB%AD%20Hydrogen%20trong%20nh%C3%B3m%20OH%3Cbr%3EC%E1%BB%99t%20II%3A%3Cbr%3EA.%20Lai%20h%C3%B3a%20sp%C2%B2%3Cbr%3EB.%20Lai%20h%C3%B3a%20sp%C2%B3%3Cbr%3E%23%201--B%2C%202--A%2C%203--B%20%3Cbr%3EL%E1%BB%9Di%20gi%E1%BA%A3i%3A%3Cbr%3ECarbon%20%28CH%E2%82%83%29%3A%20Li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%204%20nguy%C3%AAn%20t%E1%BB%AD%20%281C%2C%203H%29%2C%20kh%C3%B4ng%20c%C3%B3%20c%E1%BA%B7p%20e%20t%E1%BB%B1%20do%20-%3E%20X%3D4%20-%3E%20sp%C2%B3.%3Cbr%3E%20Carbon%20%28COOH%29%3A%20Li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%203%20nguy%C3%AAn%20t%E1%BB%AD%20%281C%2C%202O%29%2C%20kh%C3%B4ng%20c%C3%B3%20c%E1%BA%B7p%20e%20t%E1%BB%B1%20do%20-%3E%20X%3D3%20-%3E%20sp%C2%B2.%3Cbr%3E%20Oxygen%20%28OH%29%3A%20Li%C3%AAn%20k%E1%BA%BFt%20v%E1%BB%9Bi%202%20nguy%C3%AAn%20t%E1%BB%AD%20%281C%2C%201H%29%2C%20c%C3%B2n%202%20c%E1%BA%B7p%20e%20t%E1%BB%B1%20do%20-%3E%20X%3D4%20-%3E%20sp%C2%B3.%3Cbr%3E'></div>
+</div>
+</div>
+
+    <div style='text-align:center; margin-top:30px;'>
+      <button id='submitBtn' onclick='gradeQuiz();'>Nộp bài</button>
+    </div>
+    <script>
+      function gradeQuiz() {
+         let score = 0, total = 0;
+         document.querySelectorAll('.section').forEach(function(section) {
+           let partType = section.getAttribute('data-parttype');
+           section.querySelectorAll('.question').forEach(function(q) {
+             total++;
+             let qid = q.id;
+             let feedback = "";
+             if (partType === "1") {
+               let selected = q.querySelector('input[name="' + qid + '"]:checked');
+               let correct = q.querySelector('.explanation').getAttribute('data-answer');
+               if (!selected) {
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + correct + '</strong></span>';
+               } else if (selected.value === correct) {
+                 score++;
+                 feedback = '<span style="color:green;"><strong>Đúng (' + correct + ')</strong></span>';
+               } else {
+                 feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + correct + '</strong></span>';
+               }
+             } else if (partType === "2") {
+               let selectedList = q.querySelectorAll('input[name="' + qid + '"]:checked');
+               if (selectedList.length === 0) {
+                 let correct = q.querySelector('.explanation').getAttribute('data-answer');
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + correct + '</strong></span>';
+               } else {
+                 let userAnswers = [];
+                 selectedList.forEach(function(el) { userAnswers.push(el.value); });
+                 let correct = q.querySelector('.explanation').getAttribute('data-answer').split(',');
+                 userAnswers.sort(); correct.sort();
+                 if (userAnswers.join() === correct.join()) {
+                   score++;
+                   feedback = '<span style="color:green;"><strong>Đúng (' + correct.join(',') + ')</strong></span>';
+                 } else {
+                   feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + correct.join(',') + '</strong></span>';
+                 }
+               }
+             } else if (partType === "3") {
+               let inputElem = document.getElementById(qid + '_input');
+               let userInput = inputElem.value.trim();
+               let correctData = q.querySelector('.explanation').getAttribute('data-answer');
+               let accepted = correctData.split('||').map(s => s.trim());
+               if (!userInput) {
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + accepted.join(' hoặc ') + '</strong></span>';
+               } else {
+                 if (accepted.includes(userInput)) {
+                   score++;
+                   feedback = '<span style="color:green;"><strong>Đúng</strong></span>';
+                   inputElem.style.color = 'green';
+                 } else {
+                   feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + accepted.join(' hoặc ') + '</strong></span>';
+                   inputElem.style.color = 'red';
+                 }
+                 inputElem.style.fontWeight = 'bold';
+                 inputElem.disabled = true;
+               }
+             } else if (partType === "4") {
+               let inputs = q.querySelectorAll('input.auto-expand');
+               let blankResults = [];
+               inputs.forEach(function(inp, index) {
+                 let accepted = inp.getAttribute('data-answer').split('||').map(s => s.trim());
+                 let userAnswer = inp.value.trim();
+                 if (userAnswer !== "") {
+                   if (accepted.includes(userAnswer)) {
+                     blankResults.push({blank: index+1, correct: true, answer: userAnswer, accepted: accepted});
+                   } else {
+                     blankResults.push({blank: index+1, correct: false, answer: userAnswer, accepted: accepted});
+                   }
+                 } else {
+                   blankResults.push({blank: index+1, answered: false, accepted: accepted});
+                 }
+               });
+               inputs.forEach(function(inp, index) {
+                 let res = blankResults[index];
+                 if (res.answered === false) { }
+                 else {
+                   let span = document.createElement('span');
+                   span.style.fontWeight = 'bold';
+                   if (res.correct) {
+                     span.style.color = 'green';
+                     span.textContent = res.answer;
+                   } else {
+                     span.style.color = 'red';
+                     span.textContent = res.answer;
+                   }
+                   inp.parentNode.replaceChild(span, inp);
+                 }
+               });
+               let wrongBlanks = [];
+               let unansweredBlanks = [];
+               blankResults.forEach(function(r) {
+                 if (r.answered === false) { unansweredBlanks.push(r.blank); }
+                 else if (!r.correct) { wrongBlanks.push(r.blank); }
+               });
+               if (wrongBlanks.length === 0 && unansweredBlanks.length === 0) {
+                 feedback = '<span style="color:green; font-weight:bold;">Đúng</span>';
+                 score++;
+               } else {
+                 let answerList = "";
+                 blankResults.forEach(function(r) {
+                   answerList += r.blank + ') ' + r.accepted.join(', hoặc ') + '<br>';
+                 });
+                 feedback = '<span style="color:red; font-weight:bold;">Sai.';
+                 if (wrongBlanks.length > 0) {
+                   feedback += ' Bạn trả lời sai vị trí ' + wrongBlanks.join(', ') + '.';
+                 }
+                 if (unansweredBlanks.length > 0) {
+                   feedback += ' Bạn chưa trả lời vị trí ' + unansweredBlanks.join(', ') + '.';
+                 }
+                 feedback += '<br>Đáp án đúng là:<br>' + answerList + '</span>';
+               }
+             } else if (partType === "5") {
+               let correctForQuestion = true;
+               q.querySelectorAll('.dropzone').forEach(function(dropZone) {
+                 let expected = dropZone.getAttribute('data-expected').trim();
+                 let userItems = Array.from(dropZone.querySelectorAll('.draggable-item')).map(e => e.getAttribute('data-label')).sort();
+                 let expectedItems = expected ? expected.split(',').map(s => s.trim()).sort() : [];
+                 if (JSON.stringify(userItems) !== JSON.stringify(expectedItems)) {
+                   correctForQuestion = false;
+                 }
+               });
+               if (correctForQuestion) {
+                 feedback = '<span style="color:green; font-weight:bold;">Đúng</span>';
+                 score++;
+               } else {
+                 let answerPairs = q.querySelector('.explanation').getAttribute('data-answer-pairs');
+                 feedback = '<span style="color:red; font-weight:bold;">Sai. Đáp án đúng là:<br>' + answerPairs.replace(/ \|\| /g, "<br>") + '</span>';
+               }
+             }
+             let expl = q.querySelector('.explanation');
+             expl.innerHTML = feedback;
+             let encodedSolution = expl.getAttribute('data-solution');
+             let solution = encodedSolution ? decodeURIComponent(encodedSolution) : "";
+             let cleanedSolution = solution.replace(/<br\s*\/?>/gi, '').trim();
+             if (cleanedSolution !== "") {
+                 expl.innerHTML += '<div style="margin-top:10px;"><strong>Lời giải:</strong></div><div>' + solution + '</div>';
+             }
+             expl.style.display = "block";
+           });
+         });
+         document.getElementById('scoreDisplay').innerHTML = 'Tổng số điểm: ' + score + ' / ' + total;
+         document.querySelectorAll('input, select').forEach(function(inp) { inp.disabled = true; });
+         let sb = document.getElementById('submitBtn'); if(sb) sb.disabled = true;
+         MathJax.typesetPromise();
+      }
+    </script>
+  </div>
+</body>
+</html>
